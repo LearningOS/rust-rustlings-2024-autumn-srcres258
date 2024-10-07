@@ -72,9 +72,28 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn reverse(&mut self){
-		// TODO
-	}
+}
+
+impl<T: Clone> LinkedList<T> {
+    pub fn reverse(&mut self){
+        let len = self.length;
+        if len >= 2 {
+            let half_len = if len % 2 == 0 { len / 2 } else { (len - 1) / 2 };
+            let mut ptr_h = self.start.unwrap(); // pointer from the head of the list
+            let mut ptr_t = self.end.unwrap(); // pointer from the tail of the list
+            for i in 0 .. half_len {
+                let h_val = unsafe { &ptr_h.as_ref().val }.clone();
+                let t_val = unsafe { &ptr_t.as_ref().val }.clone();
+                unsafe {
+                    ptr_h.as_mut().val = t_val;
+                    ptr_t.as_mut().val = h_val;
+
+                    ptr_h = ptr_h.as_ref().next.unwrap();
+                    ptr_t = ptr_t.as_ref().prev.unwrap();
+                }
+            }
+        }
+    }
 }
 
 impl<T> Display for LinkedList<T>
