@@ -69,15 +69,65 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+}
+
+impl LinkedList<i32> {
+    pub fn merge(list_a:LinkedList<i32>,list_b:LinkedList<i32>) -> Self
+    {
+        // For integer LinkedLists, merging option must be performed in order.
+
+        // We assume here that list_a and list_b are both sorted
+        // in an increasing order (from small to big).
+
+        let mut list_a_cur = list_a.start;
+        let mut list_b_cur = list_b.start;
+        let mut result = Self::new();
+
+        while let Some(a_node) = list_a_cur {
+            let a_node_val = unsafe { a_node.as_ref().val };
+
+            'inner: while let Some(b_node) = list_b_cur {
+                let b_node_val = unsafe { b_node.as_ref().val };
+                if b_node_val > a_node_val {
+                    break 'inner;
+                }
+                result.add(b_node_val);
+                list_b_cur = unsafe { b_node.as_ref().next };
+            }
+
+            result.add(a_node_val);
+            list_a_cur = unsafe { a_node.as_ref().next };
         }
-	}
+
+        while let Some(b_node) = list_b_cur {
+            result.add(unsafe { b_node.as_ref().val });
+            list_b_cur = unsafe { b_node.as_ref().next };
+        }
+
+        result
+    }
+}
+
+impl LinkedList<String> {
+    pub fn merge(list_a:LinkedList<String>,list_b:LinkedList<String>) -> Self
+    {
+        let mut list_a_cur = list_a.start;
+        let mut list_b_cur = list_b.start;
+        let mut result = Self::new();
+
+        while let Some(a_node) = list_a_cur {
+            let a_node_val = unsafe { &a_node.as_ref().val }.clone();
+            result.add(a_node_val);
+            list_a_cur = unsafe { a_node.as_ref().next };
+        }
+        while let Some(b_node) = list_b_cur {
+            let b_node_val = unsafe { &b_node.as_ref().val }.clone();
+            result.add(b_node_val);
+            list_b_cur = unsafe { b_node.as_ref().next };
+        }
+
+        result
+    }
 }
 
 impl<T> Display for LinkedList<T>
