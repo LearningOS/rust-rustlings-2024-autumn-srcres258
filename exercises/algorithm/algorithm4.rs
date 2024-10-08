@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,13 +49,45 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match self.root.as_mut() {
+            Some(root) => {
+                // Ask the root node to insert the value.
+                root.insert(value);
+            }
+            None => {
+                // Initialise the root node if not created yet.
+                let root = Box::new(TreeNode {
+                    value,
+                    left: None,
+                    right: None
+                });
+                self.root = Some(root);
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        match self.root.as_ref() {
+            None => false,
+            Some(root) => {
+                let mut cur_node = Some(root);
+                while let Some(node) = cur_node {
+                    match value.cmp(&node.value) {
+                        Ordering::Equal => {
+                            return true;
+                        }
+                        Ordering::Less => {
+                            cur_node = node.left.as_ref();
+                        }
+                        Ordering::Greater => {
+                            cur_node = node.right.as_ref();
+                        }
+                    }
+                }
+                false
+            }
+        }
     }
 }
 
@@ -66,7 +97,48 @@ where
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                match self.left.as_mut()  {
+                    Some(left) => {
+                        // If the left node exists, call its insert method
+                        // to ask it to insert the value.
+                        left.insert(value);
+                    }
+                    None => {
+                        // If the left node is missing, create one and record it.
+                        let child = Box::new(TreeNode {
+                            value,
+                            left: None,
+                            right: None
+                        });
+                        self.left = Some(child);
+                    }
+                }
+            }
+            Ordering::Greater => {
+                match self.right.as_mut()  {
+                    Some(right) => {
+                        // If the right node exists, call its insert method
+                        // to ask it to insert the value.
+                        right.insert(value);
+                    }
+                    None => {
+                        // If the right node is missing, create one and record it.
+                        let child = Box::new(TreeNode {
+                            value,
+                            left: None,
+                            right: None
+                        });
+                        self.right = Some(child);
+                    }
+                }
+            }
+            Ordering::Equal => {
+                // For the equal circumstance, do no actions
+                // since self is already the given value.
+            }
+        }
     }
 }
 
