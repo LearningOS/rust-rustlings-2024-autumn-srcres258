@@ -5,8 +5,18 @@
 */
 // I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T>(array: &mut [T])
+where T: Copy + PartialOrd {
+	for i in 0 .. array.len() {
+        for j in i .. array.len() {
+            let a = array[i];
+            let b = array[j];
+            if a > b {
+                array[i] = b;
+                array[j] = a;
+            }
+        }
+    }
 }
 #[cfg(test)]
 mod tests {
