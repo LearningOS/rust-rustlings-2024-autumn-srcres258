@@ -7,6 +7,8 @@
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
 
+use std::str::FromStr;
+
 #[derive(Debug)]
 struct Person {
     name: String,
@@ -40,10 +42,27 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        fn process(s: &str) -> Option<Person> {
+            let parts: Vec<_> = s.split(',').collect();
+            if parts.len() != 2 {
+                return None;
+            }
+            if parts.get(0)?.is_empty() {
+                return None;
+            }
+            Some(
+                Person {
+                    name: String::from(*parts.get(0)?),
+                    age: usize::from_str(*parts.get(1)?).ok()?
+                }
+            )
+        }
+        match process(s) {
+            Some(result) => result,
+            None => Default::default()
+        }
     }
 }
 
